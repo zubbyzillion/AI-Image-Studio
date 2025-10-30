@@ -9,7 +9,7 @@
 		"lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix"
 	},
 	"dependencies": {
-		"@imagekit/next": "^2.1.2",
+		"@imagekit/next": "^2.1.3",
 		"@nextui-org/avatar": "^2.0.31",
 		"@nextui-org/button": "2.0.35",
 		"@nextui-org/card": "^2.0.32",
