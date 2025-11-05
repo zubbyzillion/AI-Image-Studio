@@ -1,7 +1,7 @@
 // TODO: Add your ImageKit configuration here
 export const imagekitConfig = {
   urlEndpoint: "https://ik.imagekit.io/iwmw9mw6e", // Add your ImageKit URL endpoint
-  publicKey: "process.env.IMAGEKIT_PUBLIC_KEY", // Add your public key
+  publicKey: "public_4eo3/zmwHj192J/bUnYu4rmE9Vs=", // Add your public key
   // Note: Private key should be used server-side only
 };
 
@@ -48,11 +48,29 @@ export const demoImages = [
     category: "background",
   },
   {
+    id: "bg-remove-shadow",
+    name: "Remove Background + Drop Shadow",
+    description: "Remove background and add realistic shadow",
+    icon: "shadow",
+    transformation: "e-bgremove:e-dropshadow",
+    cost: 11,
+    category: "effects",
+  },
+  {
     id: "smart-crop",
     name: "Smart Crop Square",
     description: "Auto-crop to 400x400 square",
     icon: "crop",
     transformation: "w-400,h-400,fo-auto",
+    cost: 0,
+    category: "smart",
+  },
+  {
+    id: "face-crop",
+    name: "Face Crop Square",
+    description: "Crop to face 300x300",
+    icon: "user",
+    transformation: "w-300,h-300,fo-face",
     cost: 0,
     category: "smart",
   },
@@ -66,6 +84,7 @@ export const demoImages = [
     category: "optimizeImage",
   },
   {
+    id: "enhance-basic",
     name: "Enhance Quality",
     description: "Basic image enhancement",
     icon: "sparkles",

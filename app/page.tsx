@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Upload, Download, RotateCcw, Sparkles } from "lucide-react";
+import { upload } from "@imagekit/next";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,13 +11,64 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function Home() {
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("") as any;
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
       setUploadedImage(file);
       setImagePreview(URL.createObjectURL(file));
+      setUploadedImageUrl("");
 
+      setIsUploading(true);
+
+      try {
+        // const authResponse = await fetch("/api/upload-auth", { cache: "no-store" });
+        // // const auth = await authResponse.json();
+
+        // // console.log("Auth params:", auth);
+
+        // if (!authResponse.ok) {
+        //   const errorMsg = await authResponse.text();
+        //   throw new Error(`failed to get upload authentication: ${errorMsg}`);
+        // }
+        // // const data = await authResponse.json();
+        //   const { token, expire, signature, publicKey } = await authResponse.json();
+
+        const authResponse = await fetch("/api/upload-auth", { cache: "no-store" });
+const authData = await authResponse.json();
+
+if (!authResponse.ok || !authData?.token || !authData?.signature || !authData?.expire) {
+  console.error("Auth API returned invalid data:", authData);
+  throw new Error(`failed to get upload authentication: ${JSON.stringify(authData)}`);
+}
+
+const { token, signature, expire, publicKey } = authData;
+
+console.log("Auth params received:", { token, signature, expire, publicKey });
+
+
+          const uploadResponse = await upload({
+            file,
+            fileName: file.name,
+            token,
+            signature,
+            expire,
+            publicKey,
+          });
+
+          if(uploadResponse.url) {
+            setUploadedImageUrl(uploadResponse.url);
+            console.log("Image upload to ImageKit", uploadResponse.url);
+          } else {
+            throw new Error("upload response missing URL");
+          }
+      } catch (error) {
+        console.error("upload error", error);
+      } finally {
+        setIsUploading(false);
+      }
       // TODO: Add ImageKit upload logic here
       console.log("File selected:", file.name);
     }
@@ -107,6 +159,13 @@ export default function Home() {
             <Card>
               <CardHeader>
                 <CardTitle className="font-heading">Your Image</CardTitle>
+                {isUploading && (
+                  <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                      <p className="text-sm text-blue-800 dark:text-blue-200">
+                        📤 Uploading to ImageKit...
+                      </p>
+                    </div>
+                )}
               </CardHeader>
               <CardContent>
                 <div className="bg-muted/50 rounded-lg p-4 aspect-square flex items-center justify-center">
